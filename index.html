@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parthan P Jayesh - Game Developer Portfolio</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- AOS CSS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <style>
+        /* Custom scrollbar for better aesthetics */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #2d3748; /* Darker gray for the track */
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4a5568; /* Medium gray for the thumb */
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6b7280; /* Lighter gray on hover */
+        }
+
+        /* Basic animation keyframes */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes bounceOnce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .animate-fade-in-down { animation: fadeInDown 1s ease-out forwards; }
+        .animate-fade-in-up { animation: fadeInUp 1s ease-out forwards; }
+        .animate-bounce-once { animation: bounceOnce 0.8s ease-in-out; }
+
+        /* Loading Screen Styles */
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #1a202c; /* Dark background to match theme */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999; /* Ensure it's on top of everything */
+            transition: opacity 0.5s ease-out; /* Smooth fade out */
+            opacity: 1;
+        }
+
+        #loading-screen.hidden {
+            opacity: 0;
+            pointer-events: none; /* Allows clicks through once faded */
+        }
+
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid #38b2ac; /* Teal color for the spinner */
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Fix for fixed header overlapping section anchors */
+        section[id] {
+            scroll-margin-top: 5rem; /* Adjust based on your nav height, 5rem gives extra space */
+        }
+
+        /* Particles.js canvas styling for background */
+        #particles-js {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 0; /* Ensures it's behind content */
+        }
+    </style>
+</head>
+<body class="antialiased leading-relaxed bg-gray-900 text-gray-200">
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Navigation Bar -->
+    <nav class="bg-gray-800 p-4 fixed w-full z-10 shadow-lg">
+        <div class="container mx-auto flex justify-between items-center px-4">
+            <a href="#" class="text-xl font-bold text-teal-400">Parthan P Jayesh</a>
+            <div class="space-x-4">
+                <a href="#about" class="text-gray-300 hover:text-white px-3 py-2 rounded-md transition duration-300">About</a>
+                <a href="#portfolio" class="text-gray-300 hover:text-white px-3 py-2 rounded-md transition duration-300">Portfolio</a>
+                <a href="#skills" class="text-gray-300 hover:text-white px-3 py-2 rounded-md transition duration-300">Skills</a>
+                <a href="#contact" class="text-gray-300 hover:text-white px-3 py-2 rounded-md transition duration-300">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="hero" class="relative bg-gradient-to-r from-gray-900 to-gray-800 h-screen flex items-center justify-center text-center p-6 md:p-12 overflow-hidden">
+        <!-- Particles.js Container -->
+        <div id="particles-js"></div>
+        <!-- Abstract background pattern/shapes for a game dev feel -->
+        <!-- Removed existing SVG grid as particles.js will provide dynamic background -->
+        <div class="relative z-10 max-w-4xl mx-auto">
+            <h1 class="text-5xl md:text-7xl font-extrabold text-white leading-tight mb-4 animate-fade-in-down">
+                Hi, I'm <span class="text-teal-400">Parthan P Jayesh</span>
+            </h1>
+            <p class="text-xl md:text-2xl text-gray-300 mb-8 animate-fade-in-up">
+                A passionate Game Developer crafting immersive experiences.
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+                <a href="#portfolio" class="bg-teal-500 hover:bg-teal-600 text-white font-bold py-3 px-8 rounded-full shadow-lg transition duration-300 transform hover:scale-105 animate-bounce-once">
+                    View My Work
+                </a>
+                <!-- Resume Download Button -->
+                <!-- Make sure to place your resume PDF file in the same directory as index.html -->
+                <a href="assets/resume/work resume.pdf" download="Parthan_P_Jayesh_Resume.pdf" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 px-8 rounded-full shadow-lg transition duration-300 transform hover:scale-105">
+                    Download Resume
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Me Section -->
+    <section id="about" class="py-16 md:py-24 bg-gray-950 text-center px-6 md:px-12" data-aos="fade-up">
+        <div class="container mx-auto max-w-4xl">
+            <h2 class="text-4xl font-bold text-white mb-8">About Me</h2>
+            <div class="grid md:grid-cols-2 gap-8 items-center">
+                <div class="order-2 md:order-1 text-left" data-aos="fade-right">
+                    <p class="text-lg text-gray-300 leading-relaxed mb-4">
+                        I'm a dedicated game developer with a deep passion for creating engaging and interactive digital worlds. With a background in <span class="text-teal-400">computer science</span> and a keen eye for detail, I specialize in bringing ideas to life through robust code and innovative design.
+                    </p>
+                    <p class="text-lg text-gray-300 leading-relaxed">
+                        My journey in game development started with a fascination for how virtual environments can evoke emotions and tell stories. I enjoy tackling complex challenges, optimizing performance, and collaborating with teams to deliver polished, player-centric experiences. Whether it's crafting intricate game mechanics or optimizing rendering pipelines, I'm committed to pushing the boundaries of what's possible in interactive entertainment.
+                    </p>
+                </div>
+                <div class="order-1 md:order-2 flex justify-center items-center" data-aos="fade-left">
+                    <img src="assets/video/my image.jpeg" alt="Your Photo" class="w-64 h-64 md:w-80 md:h-80 rounded-full shadow-xl object-cover border-4 border-teal-500 transition-all duration-300 transform hover:scale-105 hover:shadow-2xl hover:border-teal-300">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Portfolio/Projects Section -->
+    <section id="portfolio" class="py-16 md:py-24 bg-gray-900 px-6 md:px-12">
+        <div class="container mx-auto max-w-6xl">
+            <h2 class="text-4xl font-bold text-white text-center mb-12" data-aos="fade-up">My Projects</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+                <!-- Project 1 -->
+                <div class="bg-gray-800 rounded-lg shadow-xl overflow-hidden relative group" data-aos="zoom-in-up" data-aos-delay="100">
+                    <img src="assets/video/1.png" alt="Spiders reach" class="w-full h-56 object-cover transition-transform duration-300 group-hover:scale-110" onerror="this.onerror=null;this.src='https://placehold.co/600x400/2D3748/C2C7CC?text=Thumbnail+Not+Found';">
+                    
+                    <!-- Overlay for project details -->
+                    <div class="absolute inset-0 bg-black bg-opacity-75 flex flex-col items-center justify-center p-6 text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <h3 class="text-2xl font-semibold text-teal-400 mb-3">Spiders reach</h3>
+                        <p class="text-gray-300 text-sm mb-4">
+                            A hyper-casual obstacle race to the end using momentum and simple Swing mechanics.when you reach the level of 0m you die, the nearest grabable points are told to you in numbers.
+                        </p>
+                        <button class="view-project-btn inline-block bg-teal-500 hover:bg-teal-600 text-white text-sm py-2 px-4 rounded-full shadow-lg transition duration-300 transform hover:scale-105"
+                                data-video-src="assets/video/1.mp4" aria-label="View Spiders reach Gameplay">
+                            View Project
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Project 2 -->
+                <div class="bg-gray-800 rounded-lg shadow-xl overflow-hidden relative group" data-aos="zoom-in-up" data-aos-delay="200">
+                    <img src="assets/video/4.png" alt="Dungeon Delver Thumbnail" class="w-full h-56 object-cover transition-transform duration-300 group-hover:scale-110" onerror="this.onerror=null;this.src='https://placehold.co/600x400/2D3748/C2C7CC?text=Thumbnail+Not+Found';">
+                    
+                    <!-- Overlay for project details -->
+                    <div class="absolute inset-0 bg-black bg-opacity-75 flex flex-col items-center justify-center p-6 text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <h3 class="text-2xl font-semibold text-teal-400 mb-3">Scattered</h3>
+                        <p class="text-gray-300 text-sm mb-4">
+                            Scattered is a hyper-casual VR game that lets you control a cat through a laser.
+                        </p>
+                        <button class="view-project-btn inline-block bg-teal-500 hover:bg-teal-600 text-white text-sm py-2 px-4 rounded-full shadow-lg transition duration-300 transform hover:scale-105"
+                                data-video-src="assets/video/4.mp4" aria-label="View Scattered Gameplay">
+                            View Project
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Project 3 -->
+                <div class="bg-gray-800 rounded-lg shadow-xl overflow-hidden relative group" data-aos="zoom-in-up" data-aos-delay="300">
+                    <img src="assets/video/3.png" alt="Echoes of Serenity Thumbnail" class="w-full h-56 object-cover transition-transform duration-300 group-hover:scale-110" onerror="this.onerror=null;this.src='https://placehold.co/600x400/2D3748/C2C7CC?text=Thumbnail+Not+Found';">
+                    
+                    <!-- Overlay for project details -->
+                    <div class="absolute inset-0 bg-black bg-opacity-75 flex flex-col items-center justify-center p-6 text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <h3 class="text-2xl font-semibold text-teal-400 mb-3">Maze craze</h3>
+                        <p class="text-gray-300 text-sm mb-4">
+                            Maze craze is a casual puzzle game where you are the red square and you have to find a way to the green square.
+                        </p>
+                        <button class="view-project-btn inline-block bg-teal-500 hover:bg-teal-600 text-white text-sm py-2 px-4 rounded-full shadow-lg transition duration-300 transform hover:scale-105"
+                                data-video-src="assets/video/3.mp4" aria-label="View Echoes of Serenity Gameplay">
+                            View Project
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Project 4 -->
+                <div class="bg-gray-800 rounded-lg shadow-xl overflow-hidden relative group" data-aos="zoom-in-up" data-aos-delay="400">
+                    <img src="assets/video/2.jpg" alt="Pixel Arena Thumbnail" class="w-full h-56 object-cover transition-transform duration-300 group-hover:scale-110" onerror="this.onerror=null;this.src='https://placehold.co/600x400/2D3748/C2C7CC?text=Thumbnail+Not+Found';">
+                    
+                    <!-- Overlay for project details -->
+                    <div class="absolute inset-0 bg-black bg-opacity-75 flex flex-col items-center justify-center p-6 text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <h3 class="text-2xl font-semibold text-teal-400 mb-3">Lost</h3>
+                        <p class="text-gray-300 text-sm mb-4">
+                            An open-world RPG game where the protagonist has to discover who she is and why, amidst a journey filled with adventure and challenges.
+                        </p>
+                        <button class="view-project-btn inline-block bg-teal-500 hover:bg-teal-600 text-white text-sm py-2 px-4 rounded-full shadow-lg transition duration-300 transform hover:scale-105"
+                                data-video-src="assets/video/2.mp4" aria-label="View Pixel Arena Gameplay">
+                            View Project
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Project 5 -->
+                <div class="bg-gray-800 rounded-lg shadow-xl overflow-hidden relative group" data-aos="zoom-in-up" data-aos-delay="500">
+                    <img src="assets/video/5.png" alt="Sci-Fi RTS Thumbnail" class="w-full h-56 object-cover transition-transform duration-300 group-hover:scale-110" onerror="this.onerror=null;this.src='https://placehold.co/600x400/2D3748/C2C7CC?text=Thumbnail+Not+Found';">
+                    
+                    <!-- Overlay for project details -->
+                    <div class="absolute inset-0 bg-black bg-opacity-75 flex flex-col items-center justify-center p-6 text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <h3 class="text-2xl font-semibold text-teal-400 mb-3">Dust And Duel</h3>
+                        <p class="text-gray-300 text-sm mb-4">
+                            A VR multiplayer , player vs player game. the goal of the game is to kill the other player first , this game also incluse a endless wave shooter mode for single player
+                        </p>
+                        <button class="view-project-btn inline-block bg-teal-500 hover:bg-teal-600 text-white text-sm py-2 px-4 rounded-full shadow-lg transition duration-300 transform hover:scale-105"
+                                data-video-src="assets/video/5.mp4" aria-label="View Dust And Duel Gameplay">
+                            View Project
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills" class="py-16 md:py-24 bg-gray-950 px-6 md:px-12">
+        <div class="container mx-auto max-w-4xl text-center">
+            <h2 class="text-4xl font-bold text-white mb-12" data-aos="fade-up">My Skills</h2>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <!-- Skill Item - Added data-description and cursor-pointer -->
+                <div class="skill-item bg-gray-800 p-6 rounded-lg shadow-md hover:bg-gray-700 transition duration-300 flex flex-col items-center cursor-pointer"
+                     data-skill-name="Unity 3D/2D"
+                     data-skill-description="A powerful real-time 3D development platform used for creating games, simulations, and interactive experiences across various platforms."
+                     data-aos="fade-up" data-aos-delay="100">
+                    <span class="text-5xl mb-3" role="img" aria-label="Unity">🎮</span>
+                    <p class="text-xl font-semibold text-teal-400">Unity 3D/2D</p>
+                </div>
+                <div class="skill-item bg-gray-800 p-6 rounded-lg shadow-md hover:bg-gray-700 transition duration-300 flex flex-col items-center cursor-pointer"
+                     data-skill-name="Unreal Engine"
+                     data-skill-description="An advanced suite of real-time 3D creation tools, widely used for high-fidelity games, film, and interactive applications."
+                     data-aos="fade-up" data-aos-delay="200">
+                    <span class="text-5xl mb-3" role="img" aria-label="Unreal Engine">⚙️</span>
+                    <p class="text-xl font-semibold text-teal-400">Unreal Engine</p>
+                </div>
+                <div class="skill-item bg-gray-800 p-6 rounded-lg shadow-md hover:bg-gray-700 transition duration-300 flex flex-col items-center cursor-pointer"
+                     data-skill-name="C#"
+                     data-skill-description="A versatile, object-oriented programming language, essential for scripting in Unity and widely used in game development."
+                     data-aos="fade-up" data-aos-delay="300">
+                    <span class="text-5xl mb-3" role="img" aria-label="C#">💻</span>
+                    <p class="text-xl font-semibold text-teal-400">C#</p>
+                </div>
+                <div class="skill-item bg-gray-800 p-6 rounded-lg shadow-md hover:bg-gray-700 transition duration-300 flex flex-col items-center cursor-pointer"
+                     data-skill-name="C++"
+                     data-skill-description="A high-performance programming language, crucial for complex game engines like Unreal Engine and for optimizing critical game systems."
+                     data-aos="fade-up" data-aos-delay="400">
+                    <span class="text-5xl mb-3" role="img" aria-label="C++">🖥️</span>
+                    <p class="text-xl font-semibold text-teal-400">C++</p>
+                </div>
+                <div class="skill-item bg-gray-800 p-6 rounded-lg shadow-md hover:bg-gray-700 transition duration-300 flex flex-col items-center cursor-pointer"
+                     data-skill-name="Game Design"
+                     data-skill-description="The art of creating the rules, mechanics, and core experience of a game, focusing on player engagement and fun."
+                     data-aos="fade-up" data-aos-delay="500">
+                    <span class="text-5xl mb-3" role="img" aria-label="Game Design">💡</span>
+                    <p class="text-xl font-semibold text-teal-400">Game Design</p>
+                </div>
+                <div class="skill-item bg-gray-800 p-6 rounded-lg shadow-md hover:bg-gray-700 transition duration-300 flex flex-col items-center cursor-pointer"
+                     data-skill-name="Game Physics"
+                     data-skill-description="Involves simulating realistic or stylized physical interactions within a game world, like collision detection, gravity, and movement."
+                     data-aos="fade-up" data-aos-delay="600">
+                    <span class="text-5xl mb-3" role="img" aria-label="Physics">✨</span>
+                    <p class="text-xl font-semibold text-teal-400">Game Physics</p>
+                </div>
+                <!-- Updated Skill Item -->
+                <div class="skill-item bg-gray-800 p-6 rounded-lg shadow-md hover:bg-gray-700 transition duration-300 flex flex-col items-center cursor-pointer"
+                     data-skill-name="3D Modeling & Animation"
+                     data-skill-description="The process of creating three-dimensional digital representations of objects and characters, and bringing them to life through movement sequences."
+                     data-aos="fade-up" data-aos-delay="700">
+                    <span class="text-5xl mb-3" role="img" aria-label="3D Model">🧊</span>
+                    <p class="text-xl font-semibold text-teal-400">3D Modeling & Animation</p>
+                </div>
+                <div class="skill-item bg-gray-800 p-6 rounded-lg shadow-md hover:bg-gray-700 transition duration-300 flex flex-col items-center cursor-pointer"
+                     data-skill-name="Debugging"
+                     data-skill-description="The process of identifying, analyzing, and removing errors (bugs) from game code to ensure stability and correct functionality."
+                     data-aos="fade-up" data-aos-delay="800">
+                    <span class="text-5xl mb-3" role="img" aria-label="Debugging">🐞</span>
+                    <p class="text-xl font-semibold text-teal-400">Debugging</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-16 md:py-24 bg-gray-900 px-6 md:px-12" data-aos="fade-up">
+        <div class="container mx-auto max-w-xl text-center">
+            <h2 class="text-4xl font-bold text-white mb-8">Get In Touch</h2>
+            <p class="text-lg text-gray-300 mb-8">
+                Have a project in mind or just want to chat about game development? Feel free to reach out directly!
+            </p>
+            <div class="bg-gray-800 p-8 rounded-lg shadow-xl" data-aos="zoom-in" data-aos-delay="200">
+                <p class="text-xl text-teal-400 font-semibold mb-4">
+                    Email me at:
+                </p>
+                <a href="mailto:parthandev@gmail.com" class="text-white hover:text-teal-400 text-2xl font-bold underline mb-6 block transition duration-300">
+                    parthandev@gmail.com
+                </a>
+                <p class="text-gray-300 mt-6">
+                    Looking forward to hearing from you!
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 py-8 text-center text-gray-400">
+        <div class="container mx-auto px-4">
+            <p>&copy; 2025 Parthan P Jayesh. All rights reserved.</p>
+            <div class="mt-4 space-x-4">
+                <!-- Placeholder links for social media -->
+                <a href="https://github.com/Maliketh69" target="_blank" rel="noopener noreferrer" class="hover:text-white transition duration-200">GitHub</a>
+                <a href="https://linkedin.com/in/parthan-p-jayesh-8694a9261" target="_blank" rel="noopener noreferrer" class="hover:text-white transition duration-200">LinkedIn</a>
+                <a href="https://your-itch-io-profile.itch.io/" target="_blank" rel="noopener noreferrer" class="hover:text-white transition duration-200">Itch.io</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Video Modal Structure -->
+    <div id="video-modal" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-gray-900 rounded-lg shadow-2xl p-6 relative w-full max-w-3xl">
+            <!-- Adjusted close button position using flexbox -->
+            <div class="flex justify-end mb-4">
+                <button id="close-modal-btn" class="text-gray-400 hover:text-white text-3xl font-bold leading-none" aria-label="Close video modal">&times;</button>
+            </div>
+            <div class="relative pt-[56.25%] w-full"> <!-- 16:9 Aspect Ratio -->
+                <video id="gameplay-video-player" class="absolute top-0 left-0 w-full h-full rounded-lg border-2 border-teal-500"
+                        controls autoplay playsinline>
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            <p id="video-title" class="text-white text-lg font-semibold mt-4 text-center"></p>
+        </div>
+    </div>
+
+    <!-- Skill Description Modal Structure -->
+    <div id="skill-description-modal" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-gray-800 rounded-lg shadow-2xl p-6 relative w-full max-w-md">
+            <div class="flex justify-end mb-4">
+                <button id="close-skill-modal-btn" class="text-gray-400 hover:text-white text-3xl font-bold leading-none" aria-label="Close skill description modal">&times;</button>
+            </div>
+            <h3 id="skill-modal-title" class="text-2xl font-bold text-teal-400 mb-4 text-center"></h3>
+            <p id="skill-modal-description" class="text-gray-300 text-lg text-center leading-relaxed"></p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <script>
+        // JavaScript for the Video Modal
+        document.addEventListener('DOMContentLoaded', () => {
+            const viewProjectButtons = document.querySelectorAll('.view-project-btn');
+            const videoModal = document.getElementById('video-modal');
+            const closeModalBtn = document.getElementById('close-modal-btn');
+            const gameplayVideoPlayer = document.getElementById('gameplay-video-player'); // This is now the <video> element
+            const videoTitle = document.getElementById('video-title');
+
+            viewProjectButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const videoSrc = button.dataset.videoSrc; // Get video URL from data-video-src attribute
+                    // Get project title from the <h3> element, which is a sibling of the current button's parent's grandparent (div.p-6 -> div.bg-gray-800 -> h3)
+                    // A more robust way would be to add a data-title attribute to the button, but this works based on current structure.
+                    const projectTitle = button.closest('.group').querySelector('h3').textContent; 
+
+                    if (videoSrc) {
+                        gameplayVideoPlayer.src = videoSrc; // Set the video source
+                        gameplayVideoPlayer.load(); // Load the video
+                        gameplayVideoPlayer.play(); // Start playing the video
+
+                        videoTitle.textContent = projectTitle; // Set the video title
+                        videoModal.classList.remove('hidden'); // Show the modal
+                    } else {
+                        console.error("No video source defined for this project button.");
+                    }
+                });
+            });
+
+            closeModalBtn.addEventListener('click', () => {
+                videoModal.classList.add('hidden'); // Hide the modal
+                gameplayVideoPlayer.pause(); // Pause the video
+                gameplayVideoPlayer.currentTime = 0; // Reset video to start
+                gameplayVideoPlayer.src = ''; // Clear video source
+                gameplayVideoPlayer.load(); // Load an empty source to fully reset
+            });
+
+            // Close modal if user clicks outside the modal content
+            videoModal.addEventListener('click', (e) => {
+                if (e.target === videoModal) {
+                    videoModal.classList.add('hidden');
+                    gameplayVideoPlayer.pause();
+                    gameplayVideoPlayer.currentTime = 0;
+                    gameplayVideoPlayer.src = '';
+                    gameplayVideoPlayer.load();
+                }
+            });
+
+            // Accessibility: Close modal with Escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && !videoModal.classList.contains('hidden')) {
+                    videoModal.classList.add('hidden');
+                    gameplayVideoPlayer.pause();
+                    gameplayVideoPlayer.currentTime = 0;
+                    gameplayVideoPlayer.src = '';
+                    gameplayVideoPlayer.load();
+                }
+            });
+        });
+
+        // JavaScript for the Skill Description Modal
+        document.addEventListener('DOMContentLoaded', () => {
+            const skillItems = document.querySelectorAll('.skill-item');
+            const skillDescriptionModal = document.getElementById('skill-description-modal');
+            const closeSkillModalBtn = document.getElementById('close-skill-modal-btn');
+            const skillModalTitle = document.getElementById('skill-modal-title');
+            const skillModalDescription = document.getElementById('skill-modal-description');
+
+            skillItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    const skillName = item.dataset.skillName;
+                    const skillDescription = item.dataset.skillDescription;
+
+                    skillModalTitle.textContent = skillName;
+                    skillModalDescription.textContent = skillDescription;
+                    skillDescriptionModal.classList.remove('hidden'); // Show the modal
+                });
+            });
+
+            closeSkillModalBtn.addEventListener('click', () => {
+                skillDescriptionModal.classList.add('hidden'); // Hide the modal
+            });
+
+            // Close modal if user clicks outside the modal content
+            skillDescriptionModal.addEventListener('click', (e) => {
+                if (e.target === skillDescriptionModal) {
+                    skillDescriptionModal.classList.add('hidden');
+                }
+            });
+
+            // Accessibility: Close modal with Escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && !skillDescriptionModal.classList.contains('hidden')) {
+                    skillDescriptionModal.classList.add('hidden');
+                }
+            });
+        });
+
+
+        // JavaScript for the Loading Screen
+        window.addEventListener('load', () => {
+            const loadingScreen = document.getElementById('loading-screen');
+            loadingScreen.classList.add('hidden'); // Add 'hidden' class to fade it out
+        });
+
+        // Initialize AOS
+        window.addEventListener('load', () => {
+            AOS.init({
+                duration: 800, // Reduced from 1000ms to 800ms for slightly faster animation
+                once: true,    // whether animation should happen only once - while scrolling down
+            });
+        });
+
+        // Particles.js configuration - subtle background with interactivity
+        particlesJS('particles-js', {
+            "particles": {
+                "number": {
+                    "value": 40, // Back to fewer particles
+                    "density": {
+                        "enable": true,
+                        "value_area": 800
+                    }
+                },
+                "color": {
+                    "value": "#4A5568" // Muted gray/blue color for particles (subtle)
+                },
+                "shape": {
+                    "type": "circle", // Back to circles
+                    "stroke": {
+                        "width": 0,
+                        "color": "#000000"
+                    },
+                    "polygon": {
+                        "nb_sides": 5
+                    }
+                },
+                "opacity": {
+                    "value": 0.5, // Subtle opacity
+                    "random": false,
+                    "anim": {
+                        "enable": false,
+                        "speed": 1,
+                        "opacity_min": 0.1,
+                        "sync": false
+                    }
+                },
+                "size": {
+                    "value": 3, // Smaller particles
+                    "random": true,
+                    "anim": {
+                        "enable": false,
+                        "speed": 40,
+                        "size_min": 0.1,
+                        "sync": false
+                    }
+                },
+                "line_linked": {
+                    "enable": true,
+                    "distance": 150,
+                    "color": "#4A5568", // Muted gray/blue for lines
+                    "opacity": 0.4,
+                    "width": 1
+                },
+                "move": {
+                    "enable": true,
+                    "speed": 2, // Slow particle movement
+                    "direction": "none",
+                    "random": false,
+                    "straight": false,
+                    "out_mode": "out",
+                    "bounce": false,
+                    "attract": {
+                        "enable": false,
+                        "rotateX": 600,
+                        "rotateY": 1200
+                    }
+                }
+            },
+            "interactivity": {
+                "detect_on": "canvas",
+                "events": {
+                    "onhover": {
+                        "enable": true,
+                        "mode": "grab" // Keep: Particles follow mouse on hover
+                    },
+                    "onclick": {
+                        "enable": true, // Keep: Enable click interaction
+                        "mode": "repulse" // Keep: Particles push away on click
+                    },
+                    "resize": true
+                },
+                "modes": {
+                    "grab": {
+                        "distance": 200, // Adjusted grab distance
+                        "line_linked": {
+                            "opacity": 1
+                        }
+                    },
+                    "bubble": {
+                        "distance": 400,
+                        "size": 40,
+                        "duration": 2,
+                        "opacity": 8,
+                        "speed": 3
+                    },
+                    "repulse": {
+                        "distance": 100, // Repulse distance
+                        "duration": 0.8
+                    },
+                    "push": {
+                        "particles_nb": 4
+                    },
+                    "remove": {
+                        "particles_nb": 2
+                    }
+                }
+            },
+            "retina_detect": true
+        });
+    </script>
+    <!-- AOS JS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+</body>
+</html>
