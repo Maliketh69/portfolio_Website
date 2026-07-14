@@ -1,609 +1,957 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Parthan P Jayesh - Game Developer Portfolio</title>
-    <!-- Tailwind CSS CDN -->
+    <title>Parthan P Jayesh | Game Designer</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- AOS CSS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&family=Outfit:wght@500;700;800&display=swap" rel="stylesheet">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Nunito', 'sans-serif'],
+                        display: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        bgMain: '#051221',     // Deepest Dark Blue for website background
+                        bgCard: '#111820',     // Deep Neutral Slate (Lets your art colors pop)
+                        accent: '#87CEEB',     // Pastel Sky Blue for ALL text, borders, clickables
+                        accentHover: '#B0E0E6',// Lighter Pastel Blue for hover states
+                        textMain: '#87CEEB',   // Pastel Sky Blue for main text
+                        textMuted: '#5C8EA6',  // Muted sky blue for paragraphs
+                    },
+                    boxShadow: {
+                        'soft': '0 10px 40px -10px rgba(135, 206, 235, 0.25)',
+                        'float': '0 20px 40px -10px rgba(5, 18, 33, 0.8)',
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
-        /* Custom scrollbar for better aesthetics */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #2d3748; /* Darker gray for the track */
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #4a5568; /* Medium gray for the thumb */
-            border-radius: 10px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #6b7280; /* Lighter gray on hover */
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #051221; }
+        ::-webkit-scrollbar-thumb { background: #87CEEB; border-radius: 10px; border: 2px solid #051221; }
+        ::-webkit-scrollbar-thumb:hover { background: #B0E0E6; }
+
+        body {
+            background-color: theme('colors.bgMain');
+            color: theme('colors.textMain');
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            background-image: radial-gradient(rgba(135, 206, 235, 0.1) 1px, transparent 1px);
+            background-size: 30px 30px;
+            background-position: 0 0;
         }
 
-        /* Basic animation keyframes */
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
+        .hide-scroll::-webkit-scrollbar { display: none; }
+        .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+
+        .project-card {
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease, border-color 0.4s ease;
         }
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        .project-card:hover {
+            transform: translateY(-8px) rotate(-1deg);
+            box-shadow: theme('boxShadow.soft');
+            border-color: theme('colors.accent');
         }
-        @keyframes bounceOnce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
+        
+        .image-zoom {
+            transition: transform 0.6s ease;
+        }
+        .project-card:hover .image-zoom, .art-tile:hover .image-zoom {
+            transform: scale(1.08);
         }
 
-        .animate-fade-in-down { animation: fadeInDown 1s ease-out forwards; }
-        .animate-fade-in-up { animation: fadeInUp 1s ease-out forwards; }
-        .animate-bounce-once { animation: bounceOnce 0.8s ease-in-out; }
-
-        /* Loading Screen Styles */
-        #loading-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
+        .page-transition {
+            transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .page-hidden {
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(20px) scale(0.98);
+            position: absolute;
             width: 100%;
-            height: 100%;
-            background-color: #1a202c; /* Dark background to match theme */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999; /* Ensure it's on top of everything */
-            transition: opacity 0.5s ease-out; /* Smooth fade out */
+            top: 0;
+        }
+        .page-active {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0) scale(1);
+            position: relative;
+        }
+
+        /* MASONRY GRID CSS FOR ART */
+        .masonry-grid {
+            column-count: 1;
+            column-gap: 1rem;
+        }
+        @media (min-width: 640px) { .masonry-grid { column-count: 2; } }
+        @media (min-width: 1024px) { .masonry-grid { column-count: 3; } }
+        
+        .art-tile {
+            break-inside: avoid;
+            margin-bottom: 1rem;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            border: 1px solid rgba(135, 206, 235, 0.2);
+            background-color: theme('colors.bgCard');
+        }
+
+        .art-tile::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(5, 18, 33, 0.9) 0%, transparent 60%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .art-tile:hover::after {
             opacity: 1;
         }
 
-        #loading-screen.hidden {
+        .blob-shape {
+            border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+            animation: morph 8s ease-in-out infinite;
+        }
+        @keyframes morph {
+            0%, 100% { border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; }
+            34% { border-radius: 70% 30% 50% 50% / 30% 30% 70% 70%; }
+            67% { border-radius: 100% 60% 60% 100% / 100% 100% 60% 60%; }
+        }
+
+        /* Lightbox specific animations */
+        #lightbox {
+            transition: opacity 0.3s ease;
+        }
+        #lightbox.hidden {
             opacity: 0;
-            pointer-events: none; /* Allows clicks through once faded */
+            pointer-events: none;
         }
-
-        .spinner {
-            border: 4px solid rgba(255, 255, 255, 0.3);
-            border-top: 4px solid #38b2ac; /* Teal color for the spinner */
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
+        #lightbox-img {
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Fix for fixed header overlapping section anchors */
-        section[id] {
-            scroll-margin-top: 5rem; /* Adjust based on your nav height, 5rem gives extra space */
-        }
-
-        /* Particles.js canvas styling for background */
-        #particles-js {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            z-index: 0; /* Ensures it's behind content */
+        #lightbox.hidden #lightbox-img {
+            transform: scale(0.9);
         }
     </style>
 </head>
-<body class="antialiased leading-relaxed bg-gray-900 text-gray-200">
-    <!-- Loading Screen -->
-    <div id="loading-screen">
-        <div class="spinner"></div>
-    </div>
+<body class="selection:bg-accent selection:text-bgMain">
 
-    <!-- Navigation Bar -->
-    <nav class="bg-gray-800 p-4 fixed w-full z-10 shadow-lg">
-        <div class="container mx-auto flex justify-between items-center px-4">
-            <a href="#" class="text-xl font-bold text-teal-400">Parthan P Jayesh</a>
-            <div class="space-x-4">
-                <a href="#about" class="text-gray-300 hover:text-white px-3 py-2 rounded-md transition duration-300">About</a>
-                <a href="#portfolio" class="text-gray-300 hover:text-white px-3 py-2 rounded-md transition duration-300">Portfolio</a>
-                <a href="#skills" class="text-gray-300 hover:text-white px-3 py-2 rounded-md transition duration-300">Skills</a>
-                <a href="#contact" class="text-gray-300 hover:text-white px-3 py-2 rounded-md transition duration-300">Contact</a>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <section id="hero" class="relative bg-gradient-to-r from-gray-900 to-gray-800 h-screen flex items-center justify-center text-center p-6 md:p-12 overflow-hidden">
-        <!-- Particles.js Container -->
-        <div id="particles-js"></div>
-        <!-- Abstract background pattern/shapes for a game dev feel -->
-        <!-- Removed existing SVG grid as particles.js will provide dynamic background -->
-        <div class="relative z-10 max-w-4xl mx-auto">
-            <h1 class="text-5xl md:text-7xl font-extrabold text-white leading-tight mb-4 animate-fade-in-down">
-                Hi, I'm <span class="text-teal-400">Parthan P Jayesh</span>
-            </h1>
-            <p class="text-xl md:text-2xl text-gray-300 mb-8 animate-fade-in-up">
-                A passionate Game Developer crafting immersive experiences.
-            </p>
-            <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-                <a href="#portfolio" class="bg-teal-500 hover:bg-teal-600 text-white font-bold py-3 px-8 rounded-full shadow-lg transition duration-300 transform hover:scale-105 animate-bounce-once">
-                    View My Work
+    <div id="main-view" class="page-transition page-active min-h-screen">
+        
+        <!-- Proper Full-Width Header -->
+        <header class="w-full fixed top-0 z-50 bg-bgMain/90 backdrop-blur-md border-b border-accent/20 shadow-md">
+            <div class="container mx-auto px-6 h-20 flex justify-between items-center">
+                <a href="#" class="font-display text-3xl font-extrabold tracking-tight text-accent hover:text-accentHover transition-colors">
+                    PJ.
                 </a>
-                <!-- Resume Download Button -->
-                <!-- Make sure to place your resume PDF file in the same directory as index.html -->
-                <a href="assets/resume/work resume updated v1.pdf" download="Parthan_P_Jayesh_Resume.pdf" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 px-8 rounded-full shadow-lg transition duration-300 transform hover:scale-105">
-                    Download Resume
-                </a>
+                
+                <!-- Desktop Nav -->
+                <nav class="hidden md:flex space-x-8 items-center">
+                    <a href="#games" class="text-lg font-bold text-accent hover:text-accentHover transition-colors">Portfolio</a>
+                    <a href="#art" class="text-lg font-bold text-accent hover:text-accentHover transition-colors">Visual Sandbox</a>
+                    <a href="#about" class="text-lg font-bold text-accent hover:text-accentHover transition-colors">About</a>
+                    <a href="#contact" class="text-lg font-bold text-accent hover:text-accentHover transition-colors">Contact</a>
+                    <a href="assets/resume/resume.pdf" download class="px-6 py-2 text-sm font-bold bg-accent text-bgMain rounded-full hover:bg-accentHover hover:shadow-soft transition-all transform hover:-translate-y-1">Resume</a>
+                </nav>
+
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-btn" class="md:hidden text-accent text-2xl focus:outline-none p-2">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
             </div>
-        </div>
-    </section>
 
-    <!-- About Me Section -->
-    <section id="about" class="py-16 md:py-24 bg-gray-950 text-center px-6 md:px-12" data-aos="fade-up">
-        <div class="container mx-auto max-w-4xl">
-            <h2 class="text-4xl font-bold text-white mb-8">About Me</h2>
-            <div class="grid md:grid-cols-2 gap-8 items-center">
-                <div class="order-2 md:order-1 text-left" data-aos="fade-right">
-                    <p class="text-lg text-gray-300 leading-relaxed mb-4">
-                        I'm a dedicated game developer with a deep passion for creating engaging and interactive digital worlds. With a background in <span class="text-teal-400">computer science</span> and a keen eye for detail, I specialize in bringing ideas to life through robust code and innovative design.
-                    </p>
-                    <p class="text-lg text-gray-300 leading-relaxed">
-                        My journey in game development started with a fascination for how virtual environments can evoke emotions and tell stories. I enjoy tackling complex challenges, optimizing performance, and collaborating with teams to deliver polished, player-centric experiences. Whether it's crafting intricate game mechanics or optimizing rendering pipelines, I'm committed to pushing the boundaries of what's possible in interactive entertainment.
-                    </p>
-                </div>
-                <div class="order-1 md:order-2 flex justify-center items-center" data-aos="fade-left">
-                    <img src="assets/video/my image.jpeg" alt="Your Photo" class="w-64 h-64 md:w-80 md:h-80 rounded-full shadow-xl object-cover border-4 border-teal-500 transition-all duration-300 transform hover:scale-105 hover:shadow-2xl hover:border-teal-300">
-                </div>
+            <!-- Mobile Dropdown Menu -->
+            <div id="mobile-menu" class="hidden md:hidden flex-col bg-bgCard border-b border-accent/20 absolute w-full left-0 top-20 shadow-xl">
+                <a href="#games" class="mobile-link p-4 text-center font-bold text-accent border-b border-accent/10 hover:bg-accent/10">Portfolio</a>
+                <a href="#art" class="mobile-link p-4 text-center font-bold text-accent border-b border-accent/10 hover:bg-accent/10">Visual Sandbox</a>
+                <a href="#about" class="mobile-link p-4 text-center font-bold text-accent border-b border-accent/10 hover:bg-accent/10">About</a>
+                <a href="#contact" class="mobile-link p-4 text-center font-bold text-accent border-b border-accent/10 hover:bg-accent/10">Contact</a>
+                <a href="assets/resume/resume.pdf" download class="mobile-link p-4 text-center font-bold bg-accent text-bgMain">Download Resume</a>
             </div>
-        </div>
-    </section>
+        </header>
 
-    <!-- Portfolio/Projects Section -->
-    <section id="portfolio" class="py-16 md:py-24 bg-gray-900 px-6 md:px-12">
-        <div class="container mx-auto max-w-6xl">
-            <h2 class="text-4xl font-bold text-white text-center mb-12" data-aos="fade-up">My Projects</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-                <!-- Project 1 -->
-                <div class="bg-gray-800 rounded-lg shadow-xl overflow-hidden relative group" data-aos="zoom-in-up" data-aos-delay="100">
-                    <img src="assets/video/1.png" alt="Spiders reach" class="w-full h-56 object-cover transition-transform duration-300 group-hover:scale-110" onerror="this.onerror=null;this.src='https://placehold.co/600x400/2D3748/C2C7CC?text=Thumbnail+Not+Found';">
-                    
-                    <!-- Overlay for project details -->
-                    <div class="absolute inset-0 bg-black bg-opacity-75 flex flex-col items-center justify-center p-6 text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <h3 class="text-2xl font-semibold text-teal-400 mb-3">Spiders reach</h3>
-                        <p class="text-gray-300 text-sm mb-4">
-                            A hyper-casual obstacle race to the end using momentum and simple Swing mechanics.when you reach the level of 0m you die, the nearest grabable points are told to you in numbers.
-                        </p>
-                        <button class="view-project-btn inline-block bg-teal-500 hover:bg-teal-600 text-white text-sm py-2 px-4 rounded-full shadow-lg transition duration-300 transform hover:scale-105"
-                                data-video-src="assets/video/1.mp4" aria-label="View Spiders reach Gameplay">
-                            View Project
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Project 2 -->
-                <div class="bg-gray-800 rounded-lg shadow-xl overflow-hidden relative group" data-aos="zoom-in-up" data-aos-delay="200">
-                    <img src="assets/video/4.png" alt="Dungeon Delver Thumbnail" class="w-full h-56 object-cover transition-transform duration-300 group-hover:scale-110" onerror="this.onerror=null;this.src='https://placehold.co/600x400/2D3748/C2C7CC?text=Thumbnail+Not+Found';">
-                    
-                    <!-- Overlay for project details -->
-                    <div class="absolute inset-0 bg-black bg-opacity-75 flex flex-col items-center justify-center p-6 text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <h3 class="text-2xl font-semibold text-teal-400 mb-3">Scattered</h3>
-                        <p class="text-gray-300 text-sm mb-4">
-                            Scattered is a hyper-casual VR game that lets you control a cat through a laser.
-                        </p>
-                        <button class="view-project-btn inline-block bg-teal-500 hover:bg-teal-600 text-white text-sm py-2 px-4 rounded-full shadow-lg transition duration-300 transform hover:scale-105"
-                                data-video-src="assets/video/4.mp4" aria-label="View Scattered Gameplay">
-                            View Project
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Project 3 -->
-                <div class="bg-gray-800 rounded-lg shadow-xl overflow-hidden relative group" data-aos="zoom-in-up" data-aos-delay="300">
-                    <img src="assets/video/3.png" alt="Echoes of Serenity Thumbnail" class="w-full h-56 object-cover transition-transform duration-300 group-hover:scale-110" onerror="this.onerror=null;this.src='https://placehold.co/600x400/2D3748/C2C7CC?text=Thumbnail+Not+Found';">
-                    
-                    <!-- Overlay for project details -->
-                    <div class="absolute inset-0 bg-black bg-opacity-75 flex flex-col items-center justify-center p-6 text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <h3 class="text-2xl font-semibold text-teal-400 mb-3">Maze craze</h3>
-                        <p class="text-gray-300 text-sm mb-4">
-                            Maze craze is a casual puzzle game where you are the red square and you have to find a way to the green square.
-                        </p>
-                        <button class="view-project-btn inline-block bg-teal-500 hover:bg-teal-600 text-white text-sm py-2 px-4 rounded-full shadow-lg transition duration-300 transform hover:scale-105"
-                                data-video-src="assets/video/3.mp4" aria-label="View Echoes of Serenity Gameplay">
-                            View Project
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Project 4 -->
-                <div class="bg-gray-800 rounded-lg shadow-xl overflow-hidden relative group" data-aos="zoom-in-up" data-aos-delay="400">
-                    <img src="assets/video/2.jpg" alt="Pixel Arena Thumbnail" class="w-full h-56 object-cover transition-transform duration-300 group-hover:scale-110" onerror="this.onerror=null;this.src='https://placehold.co/600x400/2D3748/C2C7CC?text=Thumbnail+Not+Found';">
-                    
-                    <!-- Overlay for project details -->
-                    <div class="absolute inset-0 bg-black bg-opacity-75 flex flex-col items-center justify-center p-6 text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <h3 class="text-2xl font-semibold text-teal-400 mb-3">Lost</h3>
-                        <p class="text-gray-300 text-sm mb-4">
-                            An open-world RPG game where the protagonist has to discover who she is and why, amidst a journey filled with adventure and challenges.
-                        </p>
-                        <button class="view-project-btn inline-block bg-teal-500 hover:bg-teal-600 text-white text-sm py-2 px-4 rounded-full shadow-lg transition duration-300 transform hover:scale-105"
-                                data-video-src="assets/video/2.mp4" aria-label="View Pixel Arena Gameplay">
-                            View Project
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Project 5 -->
-                <div class="bg-gray-800 rounded-lg shadow-xl overflow-hidden relative group" data-aos="zoom-in-up" data-aos-delay="500">
-                    <img src="assets/video/5.png" alt="Sci-Fi RTS Thumbnail" class="w-full h-56 object-cover transition-transform duration-300 group-hover:scale-110" onerror="this.onerror=null;this.src='https://placehold.co/600x400/2D3748/C2C7CC?text=Thumbnail+Not+Found';">
-                    
-                    <!-- Overlay for project details -->
-                    <div class="absolute inset-0 bg-black bg-opacity-75 flex flex-col items-center justify-center p-6 text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <h3 class="text-2xl font-semibold text-teal-400 mb-3">Dust And Duel</h3>
-                        <p class="text-gray-300 text-sm mb-4">
-                            A VR multiplayer , player vs player game. the goal of the game is to kill the other player first , this game also incluse a endless wave shooter mode for single player
-                        </p>
-                        <button class="view-project-btn inline-block bg-teal-500 hover:bg-teal-600 text-white text-sm py-2 px-4 rounded-full shadow-lg transition duration-300 transform hover:scale-105"
-                                data-video-src="assets/video/5.mp4" aria-label="View Dust And Duel Gameplay">
-                            View Project
-                        </button>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </section>
-
-    <!-- Skills Section -->
-    <section id="skills" class="py-16 md:py-24 bg-gray-950 px-6 md:px-12">
-        <div class="container mx-auto max-w-4xl text-center">
-            <h2 class="text-4xl font-bold text-white mb-12" data-aos="fade-up">My Skills</h2>
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                <!-- Skill Item - Added data-description and cursor-pointer -->
-                <div class="skill-item bg-gray-800 p-6 rounded-lg shadow-md hover:bg-gray-700 transition duration-300 flex flex-col items-center cursor-pointer"
-                     data-skill-name="Unity 3D/2D"
-                     data-skill-description="A powerful real-time 3D development platform used for creating games, simulations, and interactive experiences across various platforms."
-                     data-aos="fade-up" data-aos-delay="100">
-                    <span class="text-5xl mb-3" role="img" aria-label="Unity">🎮</span>
-                    <p class="text-xl font-semibold text-teal-400">Unity 3D/2D</p>
-                </div>
-                <div class="skill-item bg-gray-800 p-6 rounded-lg shadow-md hover:bg-gray-700 transition duration-300 flex flex-col items-center cursor-pointer"
-                     data-skill-name="Unreal Engine"
-                     data-skill-description="An advanced suite of real-time 3D creation tools, widely used for high-fidelity games, film, and interactive applications."
-                     data-aos="fade-up" data-aos-delay="200">
-                    <span class="text-5xl mb-3" role="img" aria-label="Unreal Engine">⚙️</span>
-                    <p class="text-xl font-semibold text-teal-400">Unreal Engine</p>
-                </div>
-                <div class="skill-item bg-gray-800 p-6 rounded-lg shadow-md hover:bg-gray-700 transition duration-300 flex flex-col items-center cursor-pointer"
-                     data-skill-name="C#"
-                     data-skill-description="A versatile, object-oriented programming language, essential for scripting in Unity and widely used in game development."
-                     data-aos="fade-up" data-aos-delay="300">
-                    <span class="text-5xl mb-3" role="img" aria-label="C#">💻</span>
-                    <p class="text-xl font-semibold text-teal-400">C#</p>
-                </div>
-                <div class="skill-item bg-gray-800 p-6 rounded-lg shadow-md hover:bg-gray-700 transition duration-300 flex flex-col items-center cursor-pointer"
-                     data-skill-name="C++"
-                     data-skill-description="A high-performance programming language, crucial for complex game engines like Unreal Engine and for optimizing critical game systems."
-                     data-aos="fade-up" data-aos-delay="400">
-                    <span class="text-5xl mb-3" role="img" aria-label="C++">🖥️</span>
-                    <p class="text-xl font-semibold text-teal-400">C++</p>
-                </div>
-                <div class="skill-item bg-gray-800 p-6 rounded-lg shadow-md hover:bg-gray-700 transition duration-300 flex flex-col items-center cursor-pointer"
-                     data-skill-name="Game Design"
-                     data-skill-description="The art of creating the rules, mechanics, and core experience of a game, focusing on player engagement and fun."
-                     data-aos="fade-up" data-aos-delay="500">
-                    <span class="text-5xl mb-3" role="img" aria-label="Game Design">💡</span>
-                    <p class="text-xl font-semibold text-teal-400">Game Design</p>
-                </div>
-                <div class="skill-item bg-gray-800 p-6 rounded-lg shadow-md hover:bg-gray-700 transition duration-300 flex flex-col items-center cursor-pointer"
-                     data-skill-name="Game Physics"
-                     data-skill-description="Involves simulating realistic or stylized physical interactions within a game world, like collision detection, gravity, and movement."
-                     data-aos="fade-up" data-aos-delay="600">
-                    <span class="text-5xl mb-3" role="img" aria-label="Physics">✨</span>
-                    <p class="text-xl font-semibold text-teal-400">Game Physics</p>
-                </div>
-                <!-- Updated Skill Item -->
-                <div class="skill-item bg-gray-800 p-6 rounded-lg shadow-md hover:bg-gray-700 transition duration-300 flex flex-col items-center cursor-pointer"
-                     data-skill-name="3D Modeling & Animation"
-                     data-skill-description="The process of creating three-dimensional digital representations of objects and characters, and bringing them to life through movement sequences."
-                     data-aos="fade-up" data-aos-delay="700">
-                    <span class="text-5xl mb-3" role="img" aria-label="3D Model">🧊</span>
-                    <p class="text-xl font-semibold text-teal-400">3D Modeling & Animation</p>
-                </div>
-                <div class="skill-item bg-gray-800 p-6 rounded-lg shadow-md hover:bg-gray-700 transition duration-300 flex flex-col items-center cursor-pointer"
-                     data-skill-name="Debugging"
-                     data-skill-description="The process of identifying, analyzing, and removing errors (bugs) from game code to ensure stability and correct functionality."
-                     data-aos="fade-up" data-aos-delay="800">
-                    <span class="text-5xl mb-3" role="img" aria-label="Debugging">🐞</span>
-                    <p class="text-xl font-semibold text-teal-400">Debugging</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Contact Section -->
-    <section id="contact" class="py-16 md:py-24 bg-gray-900 px-6 md:px-12" data-aos="fade-up">
-        <div class="container mx-auto max-w-xl text-center">
-            <h2 class="text-4xl font-bold text-white mb-8">Get In Touch</h2>
-            <p class="text-lg text-gray-300 mb-8">
-                Have a project in mind or just want to chat about game development? Feel free to reach out directly!
-            </p>
-            <div class="bg-gray-800 p-8 rounded-lg shadow-xl" data-aos="zoom-in" data-aos-delay="200">
-                <p class="text-xl text-teal-400 font-semibold mb-4">
-                    Email me at:
+        <!-- Hero Section -->
+        <section id="hero" class="relative pt-40 pb-20 md:pt-48 md:pb-32 flex items-center justify-center text-center">
+            <div class="container mx-auto px-6 max-w-4xl" data-aos="zoom-out" data-aos-duration="800">
+                <span class="inline-block py-1.5 px-4 rounded-full bg-accent/10 text-accent font-bold text-sm mb-6 border border-accent/30">
+                    <i class="fa-solid fa-gamepad mr-2"></i>Game Designer & Developer
+                </span>
+                <h1 class="text-5xl md:text-7xl font-display font-extrabold leading-[1.1] text-accent mb-6">
+                    Hi, I'm Parthan. <br> I make fun things.
+                </h1>
+                <p class="text-textMuted text-lg md:text-xl mb-10 leading-relaxed max-w-2xl mx-auto font-bold">
+                    I focus on prototyping mechanics, tuning game feel, and solving design problems. Based in India, heading for Game Design at Ulster University.
                 </p>
-                <a href="mailto:parthandev@gmail.com" class="text-white hover:text-teal-400 text-2xl font-bold underline mb-6 block transition duration-300">
+                
+                <div class="flex flex-wrap gap-4 justify-center">
+                    <a href="#games" class="px-8 py-4 bg-accent text-bgMain font-bold rounded-full hover:bg-accentHover shadow-soft transition-all transform hover:-translate-y-1">
+                        Explore Case Studies
+                    </a>
+                    <a href="#art" class="px-8 py-4 bg-bgCard text-accent font-bold rounded-full hover:bg-accent/10 border border-accent/30 transition-all transform hover:-translate-y-1">
+                        View Visual Archive
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 1: THE GAMES & SHOWCASES (Massive Case Studies) -->
+        <section id="games" class="py-20 border-t border-accent/10">
+            <div class="container mx-auto px-6 max-w-6xl">
+                <div class="mb-12" data-aos="fade-up">
+                    <h2 class="text-4xl font-display font-extrabold text-accent mb-2">Projects & Case Studies</h2>
+                    <p class="text-textMuted font-bold">Deep dives into game mechanics, 3D environments, and art systems.</p>
+                </div>
+
+                <!-- JS Injected Grid for GAMES -->
+                <div id="games-grid" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Game Cards injected here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: THE WALL OF ART (Masonry Grid) -->
+        <section id="art" class="py-24 bg-accent/5">
+            <div class="container mx-auto px-6 max-w-7xl">
+                <div class="mb-12 text-center" data-aos="fade-up">
+                    <h2 class="text-4xl font-display font-extrabold text-accent mb-2">Visual Sandbox</h2>
+                    <p class="text-textMuted font-bold">My personal gallery of 3D modeling, digital art, and rough sketches.</p>
+                </div>
+
+                <!-- JS Injected Masonry Grid for ART -->
+                <div id="art-grid" class="masonry-grid">
+                    <!-- Art Tiles injected here -->
+                </div>
+            </div>
+        </section>
+
+        <section id="about" class="py-24 backdrop-blur-sm mt-10 border-y border-accent/20">
+            <div class="container mx-auto px-6 max-w-5xl">
+                <div class="grid md:grid-cols-2 gap-16 items-center">
+                    
+                    <div class="order-2 md:order-1 flex flex-col justify-center" data-aos="fade-right">
+                        <h2 class="text-4xl font-display font-extrabold text-accent mb-6">Behind the screen</h2>
+                        
+                        <div class="space-y-6 text-textMuted text-lg leading-relaxed mb-8 font-bold">
+                            <p>
+                                My approach to game development is pretty simple: find the fun early, and iterate until it feels great. I enjoy bridging the gap between logic (programming) and creativity (design).
+                            </p>
+                            <p>
+                                Whether I'm tweaking gravity for a hyper-casual platformer, designing diegetic UI for a VR prototype, or sketching concept art, my goal is always to create interactions that feel responsive and rewarding for the player.
+                            </p>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="bg-bgCard p-4 rounded-2xl border border-accent/30">
+                                <h4 class="font-bold text-accent mb-1"><i class="fa-solid fa-cube mr-2"></i>Engines</h4>
+                                <p class="text-sm text-textMuted font-bold">Unity, Unreal 5</p>
+                            </div>
+                            <div class="bg-bgCard p-4 rounded-2xl border border-accent/30">
+                                <h4 class="font-bold text-accent mb-1"><i class="fa-solid fa-code mr-2"></i>Languages</h4>
+                                <p class="text-sm text-textMuted font-bold">C#, C++</p>
+                            </div>
+                            <div class="bg-bgCard p-4 rounded-2xl border border-accent/30">
+                                <h4 class="font-bold text-accent mb-1"><i class="fa-solid fa-pen-nib mr-2"></i>Design</h4>
+                                <p class="text-sm text-textMuted font-bold">Prototyping, Systems</p>
+                            </div>
+                            <div class="bg-bgCard p-4 rounded-2xl border border-accent/30">
+                                <h4 class="font-bold text-accent mb-1"><i class="fa-solid fa-palette mr-2"></i>Tools</h4>
+                                <p class="text-sm text-textMuted font-bold">Blender, Photoshop</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="order-1 md:order-2 flex justify-center" data-aos="fade-left">
+                        <div class="relative w-72 h-72 md:w-96 md:h-96">
+                            <!-- Blob shadow background -->
+                            <div class="absolute inset-0 bg-accent/20 blob-shape transform translate-x-4 translate-y-4"></div>
+                            <!-- Actual Image container -->
+                            <div class="absolute inset-0 bg-bgCard blob-shape overflow-hidden border-4 border-accent shadow-[0_0_30px_rgba(135,206,235,0.3)]">
+                                <!-- Using Placehold to match the perfect dark blue and pastel sky blue -->
+                                <img src="assets/video/my image.jpeg" alt="Parthan P Jayesh" class="w-full h-full object-cover">
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <footer class="py-16 text-center" id="contact">
+            <div class="container mx-auto px-6">
+                <h2 class="font-display font-extrabold text-4xl text-accent mb-4">Let's create something cool.</h2>
+                <p class="text-textMuted font-bold mb-8">Always open for a chat about game design, art, or programming.</p>
+                
+                <a href="mailto:parthandev@gmail.com" class="inline-block text-2xl font-bold text-accent hover:text-accentHover transition-colors mb-10 underline decoration-accent/30 underline-offset-8">
                     parthandev@gmail.com
                 </a>
-                <p class="text-gray-300 mt-6">
-                    Looking forward to hearing from you!
-                </p>
+                
+                <div class="flex justify-center gap-4">
+                    <a href="https://github.com/Maliketh69" target="_blank" class="w-12 h-12 rounded-full bg-bgCard border border-accent/30 text-accent flex items-center justify-center hover:bg-accent hover:text-bgMain hover:-translate-y-1 transition-all text-xl">
+                        <i class="fa-brands fa-github"></i>
+                    </a>
+                    <a href="https://linkedin.com/in/parthan-p-jayesh-8694a9261" target="_blank" class="w-12 h-12 rounded-full bg-bgCard border border-accent/30 text-accent flex items-center justify-center hover:bg-accent hover:text-bgMain hover:-translate-y-1 transition-all text-xl">
+                        <i class="fa-brands fa-linkedin-in"></i>
+                    </a>
+                    <a href="#" target="_blank" class="w-12 h-12 rounded-full bg-bgCard border border-accent/30 text-accent flex items-center justify-center hover:bg-accent hover:text-bgMain hover:-translate-y-1 transition-all text-xl">
+                        <i class="fa-brands fa-itch-io"></i>
+                    </a>
+                </div>
             </div>
-        </div>
-    </section>
+        </footer>
+    </div>
 
-    <!-- Footer -->
-    <footer class="bg-gray-800 py-8 text-center text-gray-400">
-        <div class="container mx-auto px-4">
-            <p>&copy; 2025 Parthan P Jayesh. All rights reserved.</p>
-            <div class="mt-4 space-x-4">
-                <!-- Placeholder links for social media -->
-                <a href="https://github.com/Maliketh69" target="_blank" rel="noopener noreferrer" class="hover:text-white transition duration-200">GitHub</a>
-                <a href="https://linkedin.com/in/parthan-p-jayesh-8694a9261" target="_blank" rel="noopener noreferrer" class="hover:text-white transition duration-200">LinkedIn</a>
-                <a href="https://your-itch-io-profile.itch.io/" target="_blank" rel="noopener noreferrer" class="hover:text-white transition duration-200">Itch.io</a>
-            </div>
+    <!-- FULL SCREEN IMAGE LIGHTBOX (For Art Gallery) -->
+    <div id="lightbox" class="fixed inset-0 bg-bgMain/95 backdrop-blur-md z-[100] hidden flex-col items-center justify-center p-4 cursor-pointer">
+        <div class="absolute top-6 right-6 text-accent hover:text-accentHover text-4xl font-bold p-2 z-[110]">
+            <i class="fa-solid fa-xmark"></i>
         </div>
-    </footer>
+        <img id="lightbox-img" src="" class="max-h-[85vh] max-w-[90vw] object-contain rounded-2xl shadow-float border border-accent/30 pointer-events-none" alt="Enlarged Artwork">
+        <p id="lightbox-title" class="text-accent font-display font-extrabold text-2xl mt-6 pointer-events-none"></p>
+    </div>
 
-    <!-- Video Modal Structure -->
-    <div id="video-modal" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center p-4 z-50 hidden">
-        <div class="bg-gray-900 rounded-lg shadow-2xl p-6 relative w-full max-w-3xl">
-            <!-- Adjusted close button position using flexbox -->
-            <div class="flex justify-end mb-4">
-                <button id="close-modal-btn" class="text-gray-400 hover:text-white text-3xl font-bold leading-none" aria-label="Close video modal">&times;</button>
+    <!-- PROJECT DEEP-DIVE VIEW (For Games & Case Studies) -->
+    <div id="project-detail-view" class="fixed inset-0 bg-bgMain z-50 overflow-y-auto page-transition page-hidden">
+        
+        <!-- Floating Back Button -->
+        <button id="back-btn" class="fixed top-4 left-4 md:top-8 md:left-8 z-[60] px-6 py-3 bg-bgCard rounded-full shadow-float flex items-center justify-center text-accent border-2 border-accent hover:bg-accent hover:text-bgMain hover:scale-105 transition-all cursor-pointer font-bold gap-2">
+            <i class="fa-solid fa-arrow-left text-xl"></i>
+            <span class="hidden sm:inline">Back</span>
+            <span class="sm:hidden">Back</span>
+        </button>
+
+        <div class="container mx-auto px-6 py-20 max-w-4xl bg-bgCard min-h-screen shadow-2xl md:rounded-t-[3rem] mt-24 md:mt-32 mb-0 relative border-t border-x border-accent/30">
+            
+            <div class="inline-block bg-accent text-bgMain font-bold px-4 py-1 rounded-full text-sm mb-4" id="detail-category">Category</div>
+            <h1 id="detail-title" class="text-4xl md:text-5xl font-display font-extrabold text-accent mb-6">Project Title</h1>
+            
+            <div id="detail-tags" class="flex flex-wrap gap-2 mb-8 pb-8 border-b border-accent/20">
+                <!-- Tags injected here -->
             </div>
-            <div class="relative pt-[56.25%] w-full"> <!-- 16:9 Aspect Ratio -->
-                <video id="gameplay-video-player" class="absolute top-0 left-0 w-full h-full rounded-lg border-2 border-teal-500"
-                        controls autoplay playsinline>
-                    Your browser does not support the video tag.
-                </video>
+            
+            <!-- Game Link Button Container -->
+            <div id="detail-link-container" class="mb-10 hidden">
+                <a id="detail-link" href="#" target="_blank" class="inline-flex items-center gap-2 px-8 py-4 bg-accent text-bgMain font-bold rounded-full hover:bg-accentHover shadow-soft transition-all transform hover:-translate-y-1">
+                    <i class="fa-solid fa-gamepad"></i> <span id="detail-link-text">Play Game</span>
+                </a>
             </div>
-            <p id="video-title" class="text-white text-lg font-semibold mt-4 text-center"></p>
+
+            <!-- Media Container -->
+            <div class="w-full aspect-video bg-bgMain rounded-3xl mb-12 flex items-center justify-center overflow-hidden border border-accent/20" id="detail-media-container">
+                <!-- Dynamic Video or Image injected here -->
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-12">
+                <!-- Meta Data Sidebar -->
+                <div class="md:col-span-1 space-y-6 bg-accent/5 p-6 rounded-3xl h-fit border border-accent/20">
+                    <div>
+                        <span class="text-accent text-xs uppercase tracking-wider block mb-1 font-bold opacity-80">Role</span>
+                        <strong class="text-accent text-sm" id="detail-role">Developer</strong>
+                    </div>
+                    <div>
+                        <span class="text-accent text-xs uppercase tracking-wider block mb-1 font-bold opacity-80">Timeline</span>
+                        <strong class="text-accent text-sm" id="detail-time">Duration</strong>
+                    </div>
+                    <div>
+                        <span class="text-accent text-xs uppercase tracking-wider block mb-1 font-bold opacity-80">Tools</span>
+                        <strong class="text-accent text-sm" id="detail-tools">Software</strong>
+                    </div>
+                </div>
+
+                <!-- Text Content -->
+                <div class="md:col-span-2 space-y-12">
+                    <section>
+                        <h3 class="text-2xl font-display font-extrabold mb-4 text-accent">Overview</h3>
+                        <div id="detail-description" class="text-textMuted leading-relaxed font-bold space-y-4 text-lg">
+                            <!-- Injected content -->
+                        </div>
+                    </section>
+                    
+                    <section>
+                        <h3 class="text-2xl font-display font-extrabold mb-4 text-accent">Process & Details</h3>
+                        <div id="detail-process" class="text-textMuted leading-relaxed font-bold space-y-4 text-lg">
+                            <!-- Injected content -->
+                        </div>
+                    </section>
+                    
+                    <!-- Controls & Tips Section -->
+                    <section id="detail-controls-section" class="hidden">
+                        <h3 class="text-2xl font-display font-extrabold mb-4 text-accent">Controls & Tips</h3>
+                        <div id="detail-controls" class="text-textMuted leading-relaxed font-bold space-y-2 text-lg bg-bgMain p-6 rounded-2xl border border-accent/20">
+                            <!-- Injected controls content -->
+                        </div>
+                    </section>
+                    
+                    <!-- Gallery Section -->
+                    <section id="detail-gallery-section" class="hidden pt-8">
+                        <h3 class="text-2xl font-display font-extrabold mb-6 text-accent">Gallery Archive</h3>
+                        <div id="detail-gallery" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <!-- Images injected here -->
+                        </div>
+                    </section>
+                </div>
+            </div>
+            
+            <div class="mt-20 text-center pb-10">
+                 <button class="close-detail-btn px-8 py-4 bg-bgMain text-accent font-bold rounded-full hover:bg-accent/10 transition-all border border-accent/30">
+                    Close Case Study
+                </button>
+            </div>
         </div>
     </div>
 
-    <!-- Skill Description Modal Structure -->
-    <div id="skill-description-modal" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center p-4 z-50 hidden">
-        <div class="bg-gray-800 rounded-lg shadow-2xl p-6 relative w-full max-w-md">
-            <div class="flex justify-end mb-4">
-                <button id="close-skill-modal-btn" class="text-gray-400 hover:text-white text-3xl font-bold leading-none" aria-label="Close skill description modal">&times;</button>
-            </div>
-            <h3 id="skill-modal-title" class="text-2xl font-bold text-teal-400 mb-4 text-center"></h3>
-            <p id="skill-modal-description" class="text-gray-300 text-lg text-center leading-relaxed"></p>
-        </div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
-        // JavaScript for the Video Modal
-        document.addEventListener('DOMContentLoaded', () => {
-            const viewProjectButtons = document.querySelectorAll('.view-project-btn');
-            const videoModal = document.getElementById('video-modal');
-            const closeModalBtn = document.getElementById('close-modal-btn');
-            const gameplayVideoPlayer = document.getElementById('gameplay-video-player'); // This is now the <video> element
-            const videoTitle = document.getElementById('video-title');
+        // DATA STRUCTURE: 
+        // type: "game" renders as a large Case Study Bubble
+        // type: "art" renders as a small masonry tile in the visual sandbox
+        const portfolioData = [
+            
+            // --- GAMES ---
+            {
+                id: "spiders-reach",
+                title: "Spiders Reach",
+                type: "game",
+                category: "Hyper-Casual Mechanics",
+                thumbnail: "assets/video/1.png", 
+                videoSrc: "assets/video/1.mp4", 
+                tags: ["Unity", "C#", "Physics Systems"],
+                role: "Sole Developer & Designer",
+                timeline: "2 Weeks",
+                tools: "Unity 3D, Custom Physics",
+                shortDesc: "A fast-paced obstacle descent emphasizing momentum, timing, and dynamic anchor points.",
+                description: "<p>Spiders Reach strips a game down to a single core mechanic: swinging. The player must navigate a vertical obstacle course, avoiding a fail state at the bottom of the screen.</p>",
+                process: "<p>The biggest challenge was the game feel. Rigid-body physics felt too heavy and punishing. I wrote a custom arc logic system that provided 'coyote time', giving the player a more forgiving experience.</p>",
+                controls: "<ul class='list-disc pl-5 space-y-2'><li><strong>Left Click / Space:</strong> Shoot web and grapple</li><li><strong>A/D or Left/Right:</strong> Adjust swing momentum</li><li><strong>Tip:</strong> Release your web at the lowest point of your swing for maximum speed!</li></ul>",
+                link: "https://itch.io", 
+                linkText: "Play on Itch.io", 
+            },
+            {
+                id: "scattered",
+                title: "Scattered",
+                type: "game",
+                category: "VR Interaction Prototype",
+                thumbnail: "assets/video/4.png",
+                videoSrc: "assets/video/4.mp4", 
+                tags: ["Unity VR", "AI Pathfinding"],
+                role: "Gameplay Programmer",
+                timeline: "1 Month",
+                tools: "Unity, OpenXR",
+                shortDesc: "Exploring indirect player control in VR by guiding an AI companion with a laser pointer.",
+                description: "<p>Instead of traditional locomotion, Scattered keeps the player stationary. The player manipulates the environment and directs an AI-controlled cat using a laser pointer tool.</p>",
+                process: "<p>Because 2D menus break immersion in VR, I focused purely on diegetic feedback. The laser pointer acts as the UI—changing shapes based on the cat's AI state (seeking, stuck, idle).</p>",
+                controls: "<ul class='list-disc pl-5 space-y-2'><li><strong>VR Trigger:</strong> Activate Laser Pointer</li><li><strong>Grip Button:</strong> Grab objects in environment</li><li><strong>Tip:</strong> The cat will refuse to follow the laser if there is a loud noise!</li></ul>",
+                gallery: [
+                    "assets/video/4.1.png",
+                    "assets/video/4.2.png"
+                ]
+            },
+            {
+                id: "lost-rpg",
+                title: "Lost",
+                type: "game",
+                category: "Environment & Level Design",
+                thumbnail: "assets/video/2.jpg",
+                videoSrc: "assets/video/2.mp4",
+                tags: ["Unreal Engine 5", "World Building"],
+                role: "Level Designer and programmer ",
+                timeline: "6 Months",
+                tools: "Unreal Engine 5",
+                shortDesc: "An open-world layout emphasizing environmental storytelling and visual landmarking without UI waypoints.",
+                description: "<p>An exploration project dealing with amnesia. The core design philosophy was to remove the HUD map and guide the player organically using lighting, terrain funneling, and distinct silhouettes.</p>",
+                process: "<p>I sculpted the terrain to natural low points to make the player feel small, while placing high-contrast visual landmarks (weenies) on the horizon to draw attention.</p>",
+                gallery: [
+                    "assets/video/2pic.png",
+                    "assets/video/2pic2.png"
+                ]
+            },
+            {
+                id: "dust-duel",
+                title: "Dust And Duel",
+                type: "game",
+                category: "VR Multiplayer",
+                thumbnail: "assets/video/5.png",
+                videoSrc: "assets/video/5.mp4",
+                tags: ["VR", "Multiplayer"],
+                role: "Developer",
+                timeline: "3 Months",
+                tools: "Unity, Photon",
+                shortDesc: "A competitive VR shooter focusing on quick reflexes and spatial awareness.",
+                description: "<p>A VR PvP game where the goal is straightforward: eliminate the opponent. It includes an endless wave shooter mode for single-player practice.</p>",
+                process: "<p>Networking VR interactions accurately was the main hurdle. Ensuring that hand movements and bullet trajectories felt synchronized between clients required predicting physics states.</p>"
+            }, 
+            {
+                id: "drift-drive",
+                title: "Drift Drive",
+                type: "game",
+                category: "Arcade driving and delivery",
+                thumbnail: "assets/video/drift drive.png",
+                videoSrc: "assets/video/driftdrive.mp4",
+                tags: ["Arcade", "SinglePlayer"],
+                role: "Developer",
+                timeline: "3 Months",
+                tools: "Unity",
+                shortDesc: "Drift, boost, and deliver packages before time runs out!",
+                description: "<p>A simple arcade-style drifting delivery game where speed and precision are the key to success. Race through busy streets, dodge traffic, and deliver packages before the timer runs out. Master the drifting mechanics to take corners efficiently, collect power-ups scattered throughout the map to gain an advantage, and use boosts strategically to shave precious seconds off your delivery time. The faster you complete your deliveries, the higher your score, making every run a fun test of skill, timing, and control.</p>",
+                process: "<p>The game was designed with the goal of creating a fun, fast-paced arcade driving experience that is easy to learn but rewarding to master. The core gameplay was built around simple controls, allowing players to focus on drifting, avoiding traffic, and making quick decisions while delivering packages.</p>",
+                controls: "<ul class='list-disc pl-5 space-y-2'><li><strong>W,A,S,D:</strong> Move the car</li><li><strong>Space:</strong> break and start drift</li><li><strong>Tip:</strong>Once you're moving fast, tap Space to start drifting, then use A/D to control your drift.</li></ul>",
+                 gallery: [
+                    "assets/video/drift.png",
+                    "assets/video/drift2.png"
+                ]
+                
+            },
+             {
+                id: "echo",
+                title: "Echo",
+                type: "game",
+                category: "Puzzle platformer",
+                thumbnail: "assets/video/echot.png",
+                videoSrc: "assets/video/echo.mp4",
+                tags: ["Arcade", "SinglePlayer" ,"Puzzle","Platformer"],
+                role: "Developer and designer",
+                timeline: "3 days",
+                tools: "Unity",
+                shortDesc: "Echo is a rich 2D puzzle-platformer centered on the innovative mechanics of repetition, and collaborative strategy. In Echo, you control a character with the extraordinary ability to create temporal clones recorded versions of yourself that faithfully retrace your past movements and actions. Summon these echo to work alongside you, forming strategic partnerships with your own previous selves.",
+                description: "<p>A simple arcade-style drifting delivery game where speed and precision are the key to success. Race through busy streets, dodge traffic, and deliver packages before the timer runs out. Master the drifting mechanics to take corners efficiently, collect power-ups scattered throughout the map to gain an advantage, and use boosts strategically to shave precious seconds off your delivery time. The faster you complete your deliveries, the higher your score, making every run a fun test of skill, timing, and control.</p>",
+                process: "<p>Player actions are repeated through an echo, so the player and their echo exist simultaneously in two different locations. In some levels, the coordinated repetition of actions between the player and the echo leads to victory. Other levels require careful timing and multiple repetitions of these echoed actions to overcome challenges and progress.</p>",
+                controls: "<ul class='list-disc pl-5 space-y-2'><li><strong>A/D:</strong> Move the player</li><li><strong>Space:</strong>jump</li><li><strong>R:</strong>Record movement and play again</li><li><strong>Tip:</strong>Once you're moving fast, tap Space to start drifting, then use A/D to control your drift.</li></ul>",
+                 gallery: [
+                    "assets/video/echo1.png",
+                    "assets/video/echo2.png"
+                ],
+                link: "https://boltsaber.itch.io/echo", 
+                linkText: "Play on Itch.io"
+            },
+        
+            // --- MOVED DOWN: ENVIRONMENTS CASE STUDY ---
+            {
+                id: "environments-showcase",
+                title: "Environments",
+                type: "game", 
+                category: "3D Art & World Building",
+                thumbnail: "assets/video/basement.png", // Hero image for the card
+                videoSrc: "", 
+                tags: ["Blender", "3D Modeling", "Lighting", "Texturing"],
+                role: "3D Environment Artist",
+                timeline: "Various Studies",
+                tools: "Blender, Substance Painter, UE5",
+                shortDesc: "A collection of 3D environments, architectural renders, and prop studies focusing on lighting, composition, and mood.",
+                description: "<p>This showcase highlights my focus on creating immersive 3D spaces and detailed hard-surface props. From macro details like a desk still life to full architectural exteriors, the goal across these pieces was mastering light, texture, and environmental storytelling.</p>",
+                process: "<p>My 3D pipeline typically starts with rapid block-outs in Blender to establish scale and camera angles, followed by detailed modeling and UV unwrapping. For environments like the 'Holding Cell' and 'Kerala Residence', I placed a heavy emphasis on achieving realistic global illumination and physically based rendering (PBR) materials.</p>",
+                gallery: [
+                    "assets/video/basement.png",
+                    "assets/video/Traditional Kerala Residence Exterior Render.png",
+                    "assets/video/hallway.png",
+                    "assets/video/kitchen.png",
+                    "assets/video/desk.png",
+                    "assets/video/myroom.png",
+                    "assets/video/cup.png",
+                    "assets/video/celing .png",
+                    "assets/video/e1.jpeg",
+                    "assets/video/e2.jpeg",
+                    "assets/video/e3.jpeg",
+                    "assets/video/e4.jpeg",
+                    "assets/video/e5.jpeg",
+                    "assets/video/e6.jpeg",
+                    "assets/video/e7.jpeg",
+                    "assets/video/e8.jpeg",
+                    "assets/video/7.png",
 
-            viewProjectButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    const videoSrc = button.dataset.videoSrc; // Get video URL from data-video-src attribute
-                    // Get project title from the <h3> element, which is a sibling of the current button's parent's grandparent (div.p-6 -> div.bg-gray-800 -> h3)
-                    // A more robust way would be to add a data-title attribute to the button, but this works based on current structure.
-                    const projectTitle = button.closest('.group').querySelector('h3').textContent; 
+                ]
+            },
 
-                    if (videoSrc) {
-                        gameplayVideoPlayer.src = videoSrc; // Set the video source
-                        gameplayVideoPlayer.load(); // Load the video
-                        gameplayVideoPlayer.play(); // Start playing the video
+            // --- MOVED DOWN: ART CASE STUDY ---
+            {
+                id: "art-showcase",
+                title: "Art",
+                type: "game", 
+                category: "Illustration & Concept Art",
+                thumbnail: "assets/video/legocar.jpg", 
+                videoSrc: "",
+                tags: ["2D Illustration", "Character Design", "Portraits"],
+                role: "Illustrator",
+                timeline: "Various Studies",
+                tools: "Photoshop, Procreate",
+                shortDesc: "A visual deep-dive into character expression studies, emotional portraits, and dynamic posing.",
+                description: "<p>This collection represents my 2D illustration work, specifically focused on capturing emotion, motion, and character personality. From tight, fully rendered portrait studies to loose, expressive character concepts, these pieces explore the subtleties of human expression.</p>",
+                process: "<p>When illustrating characters, I focus heavily on establishing a strong silhouette and dynamic line of action during the sketching phase, ensuring the character reads well immediately. The rendering process then layers in mood through color theory, utilizing dramatic lighting and contrast to bring the subject to life and tell their story.</p>",
+                gallery: [
+                    "assets/video/legocar.jpg",
+                    "assets/video/middlefinger.jpg",
+                    "assets/video/plush.jpg",
+                    "assets/video/tyinghair.jpg",
+                    "assets/video/lipwhpe.jpg",
+                    "assets/video/firenmddsmom.jpg",
+                    "assets/video/potrate.jpg",
+                    "assets/video/ta1.jpeg",
+                    "assets/video/ta2.jpeg",
+                    "assets/video/ta3.jpeg",
+                    "assets/video/ta4.jpeg",
+                    "assets/video/ta5.jpeg",
+                    "assets/video/ta6.jpeg",
+                    "assets/video/ta7.jpeg",
+                    "assets/video/ta8.jpeg",
+                    "assets/video/ta9.jpeg",
+                   
+                ]
+            },
 
-                        videoTitle.textContent = projectTitle; // Set the video title
-                        videoModal.classList.remove('hidden'); // Show the modal
+            // --- NEW: DIGITAL ART ---
+            {
+                id: "digital-art-showcase",
+                title: "Digital Art",
+                type: "game", 
+                category: "Digital Painting & Rendering",
+                thumbnail: "assets/video/da13.jpeg", 
+                videoSrc: "",
+                tags: ["Digital Painting", "Color Theory", "Composition"],
+                role: "Digital Artist",
+                timeline: "Ongoing",
+                tools: "Photoshop, Illustrator, Procreate",
+                shortDesc: "A collection of polished digital paintings emphasizing light, shadow, and atmospheric storytelling.",
+                description: "<p>This showcase focuses on fully realized digital art pieces. Here, I explore different rendering techniques, from painterly and textured approaches to cleaner, graphic styles.</p>",
+                process: "<p>My digital painting process usually begins with establishing a strong value structure in grayscale before introducing colors via gradient maps or overlay layers. I then spend the majority of the time refining edges, pushing contrasts, and adding atmospheric effects to ground the subject in its environment.</p>",
+                gallery: [
+                    "assets/video/da1.jpeg",
+                    "assets/video/da2.jpeg",
+                    "assets/video/da3.jpeg",
+                    "assets/video/da4.jpeg",
+                    "assets/video/da5.jpeg",
+                    "assets/video/da6.jpeg",
+                    "assets/video/da7.jpeg",
+                    "assets/video/da8.jpeg",
+                    "assets/video/da9.jpeg",
+                    "assets/video/da10.jpeg",
+                    "assets/video/da11.jpeg",
+                    "assets/video/da12.jpeg",
+                    "assets/video/da13.jpeg",
+                    "assets/video/da14.jpeg",
+                    "assets/video/da15.jpeg",
+                    // You can add more digital art image paths here
+                ]
+            },
+
+            // --- NEW: ANIMATIONS ---
+            {
+                id: "animations-showcase",
+                title: "Animations",
+                type: "game", 
+                category: "Motion & Rigging",
+                thumbnail: "assets/video/at.png", 
+                videoSrc: "assets/video/a7.mp4",
+                tags: ["3D Animation", "Rigging", "Keyframing"],
+                role: "Animator",
+                timeline: "Various Studies",
+                tools: "Blender, Maya",
+                shortDesc: "A reel of character animations, mechanical rigs, and dynamic motion studies.",
+                description: "<p>This case study is dedicated to bringing static models to life. It covers character locomotion cycles (walks, runs, jumps), combat animations, and mechanical moving parts.</p>",
+                process: "<p>I follow traditional animation principles, focusing on weight, anticipation, and follow-through. I block out the main keyframes first (pose-to-pose) to get the timing right before delving into the graph editor to smooth out the interpolations and add secondary motion.</p>",
+                gallery: [
+                    "assets/video/a1.mp4", 
+                    "assets/video/a2.mp4",
+                    "assets/video/a3.mp4", 
+                    "assets/video/a4.mp4", 
+                    "assets/video/a6.mp4", 
+                    "assets/video/a7.mp4", 
+                    "assets/video/a8.mp4", 
+                    "assets/video/a9.mp4", 
+                     "assets/video/a5.mp4", 
+                    
+                ]
+            }
+        ];
+
+        // --- VISUAL SANDBOX ART (Simplified Masonry Format) ---
+        const masonryArt = [
+            { src: "assets/video/e1.jpeg", title: "" },
+            { src: "assets/video/basement.png", title: "The Holding Cell: Horror Environment" },
+            { src: "assets/video/middlefinger.jpg", title: "Defiance: Character Expression Study" },
+            { src: "assets/video/Traditional Kerala Residence Exterior Render.png", title: "Traditional Kerala Residence: Exterior Render" },
+            { src: "assets/video/hallway.png", title: "Architectural Walkway Lighting & Texture Study" },
+            { src: "assets/video/desk.png", title: "Academic Focus: Macro Detail Study" },
+            { src: "assets/video/kitchen.png", title: "Modern Kitchen: Interior Design Render" },
+            { src: "assets/video/e2.jpeg", title: "" },
+            { src: "assets/video/plush.jpg", title: "Cozy Embrace: Emotional Study" },
+            { src: "assets/video/tyinghair.jpg", title: "Motion & Dynamism: Hair-Tying Pose" },
+            { src: "assets/video/e3.jpeg", title: "" },
+            { src: "assets/video/lipwhpe.jpg", title: "Contemplation: Portrait Study" },
+            { src: "assets/video/myroom.png", title: "Workflow Detail: Desk Still Life" },
+            { src: "assets/video/firenmddsmom.jpg", title: "Confidence: Portrait Sketch" },
+            { src: "assets/video/e4.jpeg", title: "" },
+            { src: "assets/video/legocar.jpg", title: "Hard Surface Study: Vintage Sports Car" },
+            { src: "assets/video/e8.jpeg", title: "" },
+            { src: "assets/video/cup.png", title: "Workflow Detail: Desk Still Life" },
+            { src: "assets/video/e5.jpeg", title: "" },
+            { src: "assets/video/celing .png", title: "Lighting Detail: Ceiling Fixture Study" },
+            { src: "assets/video/e7.jpeg", title: "" },
+            { src: "assets/video/painting.png", title: "The Curators Study: Lighting & Mood Pass" },
+            { src: "assets/video/7.png", title: "Lighting Detail: prop Fixture Study" },
+            { src: "assets/video/potrate.jpg", title: "Warmth: Portrait Study" },
+            { src: "assets/video/e6.jpeg", title: "" },
+            { src: "assets/video/ta1.jpeg", title: "" },
+            { src: "assets/video/ta2.jpeg", title: "" },
+            { src: "assets/video/ta3.jpeg", title: "" },
+            { src: "assets/video/ta4.jpeg", title: "" },
+            { src: "assets/video/ta5.jpeg", title: "" },
+            { src: "assets/video/ta6.jpeg", title: "" },
+            { src: "assets/video/ta7.jpeg", title: "" },
+            { src: "assets/video/ta8.jpeg", title: "" },
+            { src: "assets/video/ta9.jpeg", title: "" },
+            { src: "assets/video/da1.jpeg", title: "" },
+            { src: "assets/video/da2.jpeg", title: "" },
+            { src: "assets/video/da3.jpeg", title: "" },
+            { src: "assets/video/da4.jpeg", title: "" },
+            { src: "assets/video/da5.jpeg", title: "" },
+            { src: "assets/video/da6.jpeg", title: "" },
+            { src: "assets/video/da7.jpeg", title: "" },
+            { src: "assets/video/da8.jpeg", title: "" },
+            { src: "assets/video/da9.jpeg", title: "" },
+            { src: "assets/video/da10.jpeg", title: "" },
+            { src: "assets/video/da11.jpeg", title: "" },
+            { src: "assets/video/da12.jpeg", title: "" },
+            { src: "assets/video/da13.jpeg", title: "" },
+            { src: "assets/video/da14.jpeg", title: "" },
+            { src: "assets/video/da15.jpeg", title: "" },
+        ];
+
+        // 1. RENDER GAMES & CASE STUDIES
+        const gamesGrid = document.getElementById('games-grid');
+        const gamesData = portfolioData; // We completely removed the old art tiles from portfolioData
+        
+        gamesData.forEach((project, index) => {
+            // Defensive programming: fallback to an empty array if tags is somehow missing
+            const tagsList = project.tags || [];
+            
+            const tagsHTML = tagsList.slice(0,3).map(tag => 
+                `<span class="text-[11px] font-bold text-bgMain bg-accent px-3 py-1 rounded-full">${tag}</span>`
+            ).join('');
+
+            const cardHTML = `
+                <div class="project-card group bg-bgCard rounded-[2rem] overflow-hidden cursor-pointer flex flex-col border border-accent/20 relative" 
+                     data-aos="fade-up" data-aos-delay="${(index % 2) * 100}"
+                     onclick="openProject('${project.id}')">
+                    
+                    <div class="aspect-video w-full overflow-hidden relative border-b border-accent/20">
+                        <img src="${project.thumbnail}" alt="${project.title}" class="image-zoom w-full h-full object-cover">
+                        
+                        <div class="absolute top-4 left-4 bg-bgMain/90 backdrop-blur-sm px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-accent border border-accent/30 shadow-sm z-10">
+                            Case Study
+                        </div>
+
+                        <!-- Hover Overlay -->
+                        <div class="absolute inset-0 bg-bgMain/90 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col items-center justify-center p-6 text-center z-20 translate-y-4 group-hover:translate-y-0">
+                            <i class="fa-solid fa-book-open text-4xl text-accent mb-4"></i>
+                            <span class="text-accent font-display font-extrabold text-2xl mb-2">View Process</span>
+                            <span class="px-6 py-2 bg-accent text-bgMain font-bold rounded-full mt-4">Click to read</span>
+                        </div>
+                    </div>
+
+                    <div class="p-8 flex flex-col flex-grow">
+                        <h3 class="text-2xl font-display font-extrabold text-accent mb-3">${project.title}</h3>
+                        <p class="text-textMuted text-base mb-6 font-bold leading-relaxed">${project.shortDesc}</p>
+                        
+                        <div class="mt-auto flex flex-col gap-4">
+                            <div class="flex flex-wrap gap-2">
+                                ${tagsHTML}
+                            </div>
+                            <div class="pt-4 border-t border-accent/20 flex justify-between items-center w-full group-hover:text-accentHover transition-colors mt-2">
+                                <span class="font-bold text-accent text-sm uppercase tracking-wide">Read Case Study</span>
+                                <i class="fa-solid fa-arrow-right text-accent"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            gamesGrid.innerHTML += cardHTML;
+        });
+
+        // 2. RENDER ART MASONRY
+        const artGrid = document.getElementById('art-grid');
+
+        masonryArt.forEach((art, index) => {
+            const tileHTML = `
+                <div class="art-tile group" data-aos="fade-up" data-aos-delay="${(index % 3) * 50}" onclick="openLightbox('${art.src}', '${art.title}')">
+                    <img src="${art.src}" alt="${art.title}" class="image-zoom w-full h-auto block rounded-2xl">
+                    
+                    <!-- Hover Info for Art -->
+                    <div class="absolute bottom-0 left-0 w-full p-4 z-10 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+                        <p class="text-accent font-display font-extrabold text-lg">${art.title}</p>
+                        <p class="text-textMuted text-xs font-bold uppercase tracking-wider"><i class="fa-solid fa-magnifying-glass-plus mr-1"></i>Enlarge</p>
+                    </div>
+                </div>
+            `;
+            artGrid.innerHTML += tileHTML;
+        });
+
+
+        // 3. LOGIC: GAME & SHOWCASE CASE STUDY VIEW
+        const mainView = document.getElementById('main-view');
+        const detailView = document.getElementById('project-detail-view');
+        
+        function openProject(projectId) {
+            const project = portfolioData.find(p => p.id === projectId);
+            if (!project) return;
+
+            document.getElementById('detail-title').textContent = project.title;
+            document.getElementById('detail-category').textContent = project.category;
+            document.getElementById('detail-role').textContent = project.role;
+            document.getElementById('detail-time').textContent = project.timeline;
+            document.getElementById('detail-tools').textContent = project.tools;
+            document.getElementById('detail-description').innerHTML = project.description;
+            document.getElementById('detail-process').innerHTML = project.process;
+
+            const tagsList = project.tags || [];
+            document.getElementById('detail-tags').innerHTML = tagsList.map(tag => 
+                `<span class="px-4 py-1.5 bg-accent/10 rounded-full font-bold text-sm text-accent border border-accent/30">${tag}</span>`
+            ).join('');
+
+            const mediaContainer = document.getElementById('detail-media-container');
+            if (project.videoSrc && project.videoSrc !== "") {
+                mediaContainer.innerHTML = `<video src="${project.videoSrc}" class="w-full h-full object-cover" controls autoplay muted playsinline></video>`;
+            } else {
+                mediaContainer.innerHTML = `<img src="${project.thumbnail}" class="w-full h-full object-cover" alt="${project.title}">`;
+            }
+
+            // LINK LOGIC
+            const linkContainer = document.getElementById('detail-link-container');
+            if (project.link) {
+                const linkElement = document.getElementById('detail-link');
+                const linkTextElement = document.getElementById('detail-link-text');
+                linkElement.href = project.link;
+                linkTextElement.textContent = project.linkText || "Play Game";
+                linkContainer.classList.remove('hidden');
+            } else {
+                linkContainer.classList.add('hidden');
+            }
+
+            // CONTROLS LOGIC
+            const controlsSection = document.getElementById('detail-controls-section');
+            if (project.controls) {
+                document.getElementById('detail-controls').innerHTML = project.controls;
+                controlsSection.classList.remove('hidden');
+            } else {
+                controlsSection.classList.add('hidden');
+            }
+
+            // GALLERY LOGIC (UPDATED TO SUPPORT VIDEOS)
+            const gallerySection = document.getElementById('detail-gallery-section');
+            if (project.gallery && project.gallery.length > 0) {
+                const galleryContainer = document.getElementById('detail-gallery');
+                galleryContainer.innerHTML = project.gallery.map(mediaSrc => {
+                    const isVideo = mediaSrc.toLowerCase().endsWith('.mp4') || mediaSrc.toLowerCase().endsWith('.webm');
+                    
+                    if (isVideo) {
+                        return `<div class="rounded-2xl overflow-hidden border border-accent/30 bg-bgMain"><video src="${mediaSrc}" class="w-full h-full object-contain max-h-[60vh] mx-auto" controls playsinline preload="metadata"></video></div>`;
                     } else {
-                        console.error("No video source defined for this project button.");
+                        return `<div class="rounded-2xl overflow-hidden border border-accent/30"><img src="${mediaSrc}" class="w-full h-auto object-cover hover:scale-105 transition-transform duration-500" alt="Gallery Media"></div>`;
                     }
+                }).join('');
+                gallerySection.classList.remove('hidden');
+            } else {
+                gallerySection.classList.add('hidden');
+            }
+
+            mainView.classList.remove('page-active');
+            mainView.classList.add('page-hidden');
+            
+            detailView.classList.remove('page-hidden');
+            detailView.classList.add('page-active');
+            
+            detailView.scrollTo(0,0);
+        }
+
+        function closeProject() {
+            detailView.classList.remove('page-active');
+            detailView.classList.add('page-hidden');
+            
+            mainView.classList.remove('page-hidden');
+            mainView.classList.add('page-active');
+
+            // Pause all videos when closing the project view
+            const videos = document.querySelectorAll('#project-detail-view video');
+            videos.forEach(video => video.pause());
+        }
+
+        document.getElementById('back-btn').addEventListener('click', closeProject);
+        document.querySelectorAll('.close-detail-btn').forEach(btn => btn.addEventListener('click', closeProject));
+
+
+        // 4. LOGIC: ART LIGHTBOX
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightbox-img');
+        const lightboxTitle = document.getElementById('lightbox-title');
+
+        function openLightbox(imgSrc, title) {
+            lightboxImg.src = imgSrc;
+            lightboxTitle.textContent = title;
+            lightbox.classList.remove('hidden');
+            lightbox.classList.add('flex');
+            // Small timeout to allow display:flex to apply before setting opacity for transition
+            setTimeout(() => {
+                lightbox.style.opacity = '1';
+                lightboxImg.style.transform = 'scale(1)';
+            }, 10);
+        }
+
+        function closeLightbox() {
+            lightbox.style.opacity = '0';
+            lightboxImg.style.transform = 'scale(0.9)';
+            setTimeout(() => {
+                lightbox.classList.add('hidden');
+                lightbox.classList.remove('flex');
+            }, 300); // match transition duration
+        }
+
+        lightbox.addEventListener('click', closeLightbox);
+        
+        // Accessibility: Escape key closes whatever is open
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                if (!lightbox.classList.contains('hidden')) closeLightbox();
+                if (detailView.classList.contains('page-active')) closeProject();
+            }
+        });
+
+
+        // MOBILE MENU LOGIC
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileLinks = document.querySelectorAll('.mobile-link');
+
+        if(mobileMenuBtn && mobileMenu) {
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+                mobileMenu.classList.toggle('flex');
+            });
+
+            mobileLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileMenu.classList.add('hidden');
+                    mobileMenu.classList.remove('flex');
                 });
             });
+        }
 
-            closeModalBtn.addEventListener('click', () => {
-                videoModal.classList.add('hidden'); // Hide the modal
-                gameplayVideoPlayer.pause(); // Pause the video
-                gameplayVideoPlayer.currentTime = 0; // Reset video to start
-                gameplayVideoPlayer.src = ''; // Clear video source
-                gameplayVideoPlayer.load(); // Load an empty source to fully reset
-            });
-
-            // Close modal if user clicks outside the modal content
-            videoModal.addEventListener('click', (e) => {
-                if (e.target === videoModal) {
-                    videoModal.classList.add('hidden');
-                    gameplayVideoPlayer.pause();
-                    gameplayVideoPlayer.currentTime = 0;
-                    gameplayVideoPlayer.src = '';
-                    gameplayVideoPlayer.load();
-                }
-            });
-
-            // Accessibility: Close modal with Escape key
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape' && !videoModal.classList.contains('hidden')) {
-                    videoModal.classList.add('hidden');
-                    gameplayVideoPlayer.pause();
-                    gameplayVideoPlayer.currentTime = 0;
-                    gameplayVideoPlayer.src = '';
-                    gameplayVideoPlayer.load();
-                }
-            });
-        });
-
-        // JavaScript for the Skill Description Modal
-        document.addEventListener('DOMContentLoaded', () => {
-            const skillItems = document.querySelectorAll('.skill-item');
-            const skillDescriptionModal = document.getElementById('skill-description-modal');
-            const closeSkillModalBtn = document.getElementById('close-skill-modal-btn');
-            const skillModalTitle = document.getElementById('skill-modal-title');
-            const skillModalDescription = document.getElementById('skill-modal-description');
-
-            skillItems.forEach(item => {
-                item.addEventListener('click', () => {
-                    const skillName = item.dataset.skillName;
-                    const skillDescription = item.dataset.skillDescription;
-
-                    skillModalTitle.textContent = skillName;
-                    skillModalDescription.textContent = skillDescription;
-                    skillDescriptionModal.classList.remove('hidden'); // Show the modal
-                });
-            });
-
-            closeSkillModalBtn.addEventListener('click', () => {
-                skillDescriptionModal.classList.add('hidden'); // Hide the modal
-            });
-
-            // Close modal if user clicks outside the modal content
-            skillDescriptionModal.addEventListener('click', (e) => {
-                if (e.target === skillDescriptionModal) {
-                    skillDescriptionModal.classList.add('hidden');
-                }
-            });
-
-            // Accessibility: Close modal with Escape key
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape' && !skillDescriptionModal.classList.contains('hidden')) {
-                    skillDescriptionModal.classList.add('hidden');
-                }
-            });
-        });
-
-
-        // JavaScript for the Loading Screen
-        window.addEventListener('load', () => {
-            const loadingScreen = document.getElementById('loading-screen');
-            loadingScreen.classList.add('hidden'); // Add 'hidden' class to fade it out
-        });
-
-        // Initialize AOS
         window.addEventListener('load', () => {
             AOS.init({
-                duration: 800, // Reduced from 1000ms to 800ms for slightly faster animation
-                once: true,    // whether animation should happen only once - while scrolling down
+                duration: 800,
+                once: true,
+                offset: 50,
             });
         });
-
-        // Particles.js configuration - subtle background with interactivity
-        particlesJS('particles-js', {
-            "particles": {
-                "number": {
-                    "value": 40, // Back to fewer particles
-                    "density": {
-                        "enable": true,
-                        "value_area": 800
-                    }
-                },
-                "color": {
-                    "value": "#4A5568" // Muted gray/blue color for particles (subtle)
-                },
-                "shape": {
-                    "type": "circle", // Back to circles
-                    "stroke": {
-                        "width": 0,
-                        "color": "#000000"
-                    },
-                    "polygon": {
-                        "nb_sides": 5
-                    }
-                },
-                "opacity": {
-                    "value": 0.5, // Subtle opacity
-                    "random": false,
-                    "anim": {
-                        "enable": false,
-                        "speed": 1,
-                        "opacity_min": 0.1,
-                        "sync": false
-                    }
-                },
-                "size": {
-                    "value": 3, // Smaller particles
-                    "random": true,
-                    "anim": {
-                        "enable": false,
-                        "speed": 40,
-                        "size_min": 0.1,
-                        "sync": false
-                    }
-                },
-                "line_linked": {
-                    "enable": true,
-                    "distance": 150,
-                    "color": "#4A5568", // Muted gray/blue for lines
-                    "opacity": 0.4,
-                    "width": 1
-                },
-                "move": {
-                    "enable": true,
-                    "speed": 2, // Slow particle movement
-                    "direction": "none",
-                    "random": false,
-                    "straight": false,
-                    "out_mode": "out",
-                    "bounce": false,
-                    "attract": {
-                        "enable": false,
-                        "rotateX": 600,
-                        "rotateY": 1200
-                    }
-                }
-            },
-            "interactivity": {
-                "detect_on": "canvas",
-                "events": {
-                    "onhover": {
-                        "enable": true,
-                        "mode": "grab" // Keep: Particles follow mouse on hover
-                    },
-                    "onclick": {
-                        "enable": true, // Keep: Enable click interaction
-                        "mode": "repulse" // Keep: Particles push away on click
-                    },
-                    "resize": true
-                },
-                "modes": {
-                    "grab": {
-                        "distance": 200, // Adjusted grab distance
-                        "line_linked": {
-                            "opacity": 1
-                        }
-                    },
-                    "bubble": {
-                        "distance": 400,
-                        "size": 40,
-                        "duration": 2,
-                        "opacity": 8,
-                        "speed": 3
-                    },
-                    "repulse": {
-                        "distance": 100, // Repulse distance
-                        "duration": 0.8
-                    },
-                    "push": {
-                        "particles_nb": 4
-                    },
-                    "remove": {
-                        "particles_nb": 2
-                    }
-                }
-            },
-            "retina_detect": true
-        });
     </script>
-    <!-- AOS JS -->
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 </body>
 </html>
